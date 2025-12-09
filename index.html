@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potluck - Social Recipe & Pantry Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo" onclick="showSection('home')">
+                <i class="fas fa-utensils"></i>
+                <span>Potluck</span>
+            </div>
+            <div class="nav-links">
+                <a onclick="showSection('home')">Home</a>
+                <a onclick="showSection('recipes')">Recipes</a>
+                <a onclick="handlePantryClick()">Pantry</a>
+                <a onclick="handleCookbookClick()">Cookbook</a>
+                <a onclick="handleCommunityClick()">Upload</a>
+                <!-- Login/Sign Up buttons -->
+                <button class="btn btn-outline" id="loginBtn" onclick="showAuthForm('login')">Login</button>
+                <button class="btn btn-primary" id="registerBtn" onclick="showAuthForm('register')">Sign Up</button>
+                <button class="btn btn-secondary" id="logoutBtn" onclick="logout()" style="display: none;">Logout</button>
+</div>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Image -->
+    <section class="hero">
+        <div class="hero-image"></div>
+        <div class="hero-content">
+            <h1>Cook Smarter, Waste Less</h1>
+            <p>Discover recipes based on ingredients you already have. Join our community of home cooks today!</p>
+            <div class="hero-btns">
+                <button class="btn btn-primary" onclick="showAuthForm('register')">
+                    <i class="fas fa-user-plus"></i> Get Started Free
+                </button>
+                <button class="btn btn-outline" onclick="showSection('recipes')">
+                    <i class="fas fa-search"></i> Browse Recipes
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Instructions (Hidden by default) -->
+    <div class="container">
+        <div class="image-instructions" id="imageInstructions" style="display: none;">
+            <h3><i class="fas fa-info-circle"></i> How to Add Your Hero Image</h3>
+            <p>To add your own hero image to Potluck:</p>
+            <ol>
+                <li>Create a folder named <code>images</code> in your project directory</li>
+                <li>Add your hero image to the folder (name it <code>potluck-hero.jpg</code>)</li>
+                <li>Make sure the image is at least 1200x400 pixels for best quality</li>
+                <li>Supported formats: JPG, PNG, or WebP</li>
+            </ol>
+            <p><strong>Example image sources:</strong> food photography, cooking scene, ingredients collage, or kitchen setting</p>
+            <button class="btn btn-secondary" onclick="handleCommunityClick()">
+                <i class="fas fa-plus"></i> Upload Recipe
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Features Section -->
+        <section id="home-section">
+            <h2 class="section-title">How Potluck Works</h2>
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3>Discover Recipes</h3>
+                    <p>Browse thousands of recipes from our community. Find delicious meals without needing to sign up first!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3>Track Your Pantry</h3>
+                    <p>Create an account to track ingredients you have on hand. Get personalized recipe suggestions based on what you already own.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Build Your Cookbook</h3>
+                    <p>Save your favorite recipes, upload your own creations, and share them with the Potluck community.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recipes Dashboard -->
+        <section class="dashboard-section" id="recipes-section" style="display: none;">
+            <h2 class="section-title">Recipe Discovery</h2>
+            <p>Browse recipes from our community. Sign up to get personalized suggestions based on your pantry!</p>
+            
+            <div class="login-prompt" id="recipesLoginPrompt">
+                <h3>Unlock Personalized Recipe Suggestions!</h3>
+                <p>Create an account or login to track your pantry and get recipes tailored to ingredients you already have.</p>
+                <div class="prompt-buttons">
+                    <button class="btn btn-primary" onclick="showAuthForm('register')">Create Account</button>
+                    <button class="btn btn-outline" onclick="showAuthForm('login')">Login</button>
+                </div>
+            </div>
+            
+            <div class="recipes-grid" id="recipesGrid">
+                <!-- Recipes will be added here -->
+            </div>
+        </section>
+
+        <!-- Pantry Dashboard -->
+        <section class="dashboard-section" id="pantry-section" style="display: none;">
+            <h2 class="section-title">My Pantry</h2>
+            
+            <div id="pantryLoginPrompt" class="login-prompt">
+                <h3>Start Tracking Your Pantry!</h3>
+                <p>Create an account or login to start tracking ingredients and get personalized recipe suggestions.</p>
+                <div class="prompt-buttons">
+                    <button class="btn btn-primary" onclick="showAuthForm('register')">Create Account</button>
+                    <button class="btn btn-outline" onclick="showAuthForm('login')">Login</button>
+                </div>
+            </div>
+            
+            <div id="pantryContent" style="display: none;">
+                <p>Add ingredients you have available, and we'll suggest recipes you can make.</p>
+                
+                <!-- Find Recipes Button -->
+                <div class="pantry-actions" style="margin-bottom: 1.5rem;">
+                    <button class="btn btn-primary" onclick="findRecipesFromPantry()">
+                        <i class="fas fa-search"></i> Find Recipes from Pantry
+                    </button>
+                </div>
+                
+                <!-- Add Item Form -->
+                <div class="add-item-form">
+                    <input type="text" id="newItem" placeholder="Add ingredient (e.g., chicken, tomatoes, flour)">
+                    <input type="text" id="itemAmount" placeholder="Amount (e.g., 2 cups, 500g)">
+                    <button class="btn btn-primary" onclick="addPantryItem()">
+                        <i class="fas fa-plus"></i> Add to Pantry
+                    </button>
+                </div>
+                
+                <!-- Pantry Items List -->
+                <div class="pantry-items" id="pantryItems">
+                    <!-- Pantry items will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Cookbook Dashboard -->
+        <section class="dashboard-section" id="cookbook-section" style="display: none;">
+            <h2 class="section-title">My Cookbook</h2>
+            
+            <div id="cookbookLoginPrompt" class="login-prompt">
+                <h3>Build Your Personal Cookbook!</h3>
+                <p>Create an account or login to save recipes, upload your own creations, and build your personal cookbook.</p>
+                <div class="prompt-buttons">
+                    <button class="btn btn-primary" onclick="showAuthForm('register')">Create Account</button>
+                    <button class="btn btn-outline" onclick="showAuthForm('login')">Login</button>
+                </div>
+            </div>
+            
+            <div id="cookbookContent" style="display: none;">
+                <p>Your saved recipes and personal creations.</p>
+                
+                <div class="cookbook-actions">
+                    <button class="btn btn-secondary" onclick="handleCommunityClick()">
+                        <i class="fas fa-plus"></i> Upload Recipe
+                    </button>
+                </div>
+                        
+                <div class="recipes-grid" id="cookbookGrid">
+                    <!-- Cookbook recipes will be dynamically added here -->
+                </div>
+                
+                <div id="emptyCookbook" style="text-align: center; padding: 3rem; color: var(--gray); display: none;">
+                    <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <h3>Your cookbook is empty</h3>
+                    <p>Save recipes from the discovery page or upload your own recipes to get started!</p>
+                    <button class="btn btn-primary" onclick="showSection('recipes')" style="margin-top: 1rem;">
+                        <i class="fas fa-search"></i> Discover Recipes
+                    </button>
+                </div>
+            </div>
+        </section>
+        <!-- Community Dashboard -->
+        <section class="dashboard-section" id="community-section" style="display: none;">
+            <h2 class="section-title">Upload Recipes</h2>
+            
+            <div id="communityLoginPrompt" class="login-prompt">
+                <h3>Join Our Cooking Community!</h3>
+                <p>Create an account or login to share your recipes with the community and discover new favorites.</p>
+                <div class="prompt-buttons">
+                    <button class="btn btn-primary" onclick="showAuthForm('register')">Create Account</button>
+                    <button class="btn btn-outline" onclick="showAuthForm('login')">Login</button>
+                </div>
+            </div>
+            
+            <div id="communityContent" style="display: none;">
+                <p>Share your recipes with the Potluck community and discover new favorites.</p>
+                
+                <div class="upload-form" id="uploadForm">
+                    <h3>Upload Your Recipe</h3>
+                    <div class="form-group">
+                        <label for="recipeTitle">Recipe Title</label>
+                        <input type="text" id="recipeTitle" placeholder="e.g., Chicken Alfredo Pasta">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeIngredients">Ingredients (comma separated)</label>
+                        <textarea id="recipeIngredients" rows="3" placeholder="e.g., chicken breast, pasta, cream, garlic, parmesan"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipeInstructions">Instructions</label>
+                        <textarea id="recipeInstructions" rows="4" placeholder="Describe how to make the recipe..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="uploadRecipe()">
+                        <i class="fas fa-upload"></i> Share Recipe
+                    </button>
+                </div>
+                
+                <div class="recipes-grid" id="communityGrid">
+                    <!-- Community recipes will be dynamically added here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Form -->
+        <div class="auth-form" id="loginForm">
+            <h2>Login to Potluck</h2>
+            <div class="form-group">
+                <label for="loginEmail">Email</label>
+                <input type="email" id="loginEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input type="password" id="loginPassword" placeholder="Enter your password">
+            </div>
+            <div id="loginError" style="color: red; font-size: 0.9rem; margin-top: 0.5rem; display: none;">
+                Incorrect email or password
+            </div>
+            <div class="form-options">
+                <label>
+                    <input type="checkbox"> Remember me
+                </label>
+                <a href="#" style="color: var(--primary);">Forgot password?</a>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="login()">Login</button>
+            <div class="toggle-auth">
+                Don't have an account? <a href="#" onclick="showAuthForm('register')">Sign up</a>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div class="auth-form" id="registerForm">
+            <h2>Join Potluck</h2>
+            <div class="form-group">
+                <label for="registerName">Full Name</label>
+                <input type="text" id="registerName" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label for="registerEmail">Email</label>
+                <input type="email" id="registerEmail" placeholder="your@email.com">
+            </div>
+            <div class="form-group">
+                <label for="registerPassword">Password</label>
+                <input type="password" id="registerPassword" placeholder="Create a password">
+            </div>
+            <div class="form-options">
+                <label>
+                    <input type="checkbox"> I agree to the Terms & Privacy
+                </label>
+            </div>
+            <button class="btn btn-primary" style="width: 100%;" onclick="register()">Create Account</button>
+            <div class="toggle-auth">
+                Already have an account? <a href="#" onclick="showAuthForm('login')">Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recipe Detail Page -->
+    <div class="recipe-detail" id="recipeDetail">
+        <div class="recipe-detail-content">
+            <button class="close-recipe" onclick="closeRecipeDetail()">&times;</button>
+            <div class="recipe-detail-header">
+                <h2 id="detailTitle">Recipe Title</h2>
+                <div class="recipe-meta">
+                    <span id="detailAuthor">By Author</span>
+                    <span id="detailLikes"><i class="fas fa-heart"></i> <span id="likeCount">0</span> likes</span>
+                </div>
+            </div>
+            <div class="recipe-detail-body">
+                <div class="recipe-ingredients">
+                    <h3>Ingredients</h3>
+                    <ul id="detailIngredients">
+                        <!-- Ingredients will be added here -->
+                    </ul>
+                </div>
+                <div class="recipe-instructions">
+                    <h3>Instructions</h3>
+                    <div id="detailInstructions">
+                        <!-- Instructions will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Potluck</h4>
+                <p>Combining pantry management with recipe discovery and community sharing to reduce food waste and inspire home cooks.</p>
+            </div>
+        <div class="footer-section">
+            <h4>Quick Links</h4>
+            <ul class="footer-links">
+                <li><a onclick="showSection('home')">Home</a></li>
+                        <li><a onclick="showSection('recipes')">Recipes</a></li>
+                <li><a onclick="handlePantryClick()">Pantry</a></li>
+                <li><a onclick="handleCookbookClick()">Cookbook</a></li>
+            </ul>
+</div>
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <ul class="footer-links">
+                    <li><i class="fas fa-envelope"></i> mredenbaugh@gus.pittsate.edu</li>
+                    <li><i class="fas fa-phone"></i> (913) 730-6323</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 1701 S. Broadway St., Pittsburg, KS 66762</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            &copy; 2025 Potluck. CS-300 Project. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
