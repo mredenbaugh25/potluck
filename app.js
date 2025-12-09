@@ -5,7 +5,16 @@ let userRecipes = []
 let savedRecipes = []
 let allUsers = []
 
-const API_BASE = window.location.origin + '/api';
+let API_BASE;
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    API_BASE = 'http://localhost:3000/api';
+} else {
+    // For production on Render
+    API_BASE = window.location.origin + '/api';
+}
+
+console.log('API Base URL:', API_BASE);
+console.log('Current URL:', window.location.href);
 
 async function loadUsersFromCSV()
 {
