@@ -1,8 +1,0 @@
-id,name,email,password,created_date,pantry
-1,John Doe,john@example.com,password123,2024-12-01,Chicken Breast:500g|Tomatoes:4 pieces|Garlic:5 cloves|Olive Oil:200ml|Pasta:200g
-2,Jane Smith,jane@example.com,securepass456,2024-11-15,Broccoli:1 head|Carrots:6 pieces|Bell Peppers:2 pieces|Soy Sauce:150ml|Rice:1kg
-3,Alex Johnson,alex@example.com,myrecipepass789,2024-12-05,Flour:1000g|Sugar:500g|Chocolate Chips:200g|Butter:250g|Eggs:12 pieces
-4,Sarah Williams,sarah@example.com,cooking123,2024-12-10,Onions:3 pieces|Potatoes:1kg|Ground Beef:400g|Cheese:200g|Milk:1 liter
-5,Michael Brown,michael@example.com,brownie456,2024-12-12,Lettuce:1 head|Tomatoes:3 pieces|Cucumber:1 piece|Salmon:300g|Lemons:2 pieces
-6,j,j,j,2025-12-09,
-7,testuser,test@test.test,test,2025-12-09,Chocolate chips:1 cup|Chicken:2 lb
